@@ -53,12 +53,16 @@ void insertAfterAGivenElement(node **head, int data, int num)
     tmp->data = data;
     node *tmp1 = createNode();
     tmp1 = *head;
+    tmp1 = tmp1->next;
     while (tmp1->data != num && tmp1->next != NULL)
     {
         tmp1 = tmp1->next;
     }
-    tmp->next = tmp1->next;
-    tmp1->next = tmp;
+    if (tmp1->next != NULL)
+    {
+        tmp->next = tmp1->next;
+        tmp1->next = tmp;
+    }
 }
 
 void deleteNodeWithValue(node **head, int value)
@@ -66,13 +70,16 @@ void deleteNodeWithValue(node **head, int value)
     node *tmp = createNode();
     node *tmp1 = createNode();
     tmp1 = *head;
-    while (tmp1->data != value)
+    while (tmp1->data != value && tmp1->next != NULL)
     {
         tmp = tmp1;
         tmp1 = tmp1->next;
     }
-    tmp->next = tmp1->next;
-    tmp1->next = NULL;
+    if (tmp1->next != NULL)
+    {
+        tmp->next = tmp1->next;
+        tmp1->next = NULL;
+    }
 }
 
 void printLList(node *head)
@@ -98,27 +105,24 @@ node *reversingLinkedList(node *head)
         tmp1 = tmp1->next;
         if (count > 1)
         {
-            break;
-        }
-    }
-    if (count > 1)
-    {
-        node *before = createNode();
-        node *current = createNode();
-        node *after = createNode();
-        current = head->next;
-        tmp1 = head->next;
-        while (current->next != NULL)
-        {
-            after = current->next;
+            node *before = createNode();
+            node *current = createNode();
+            node *after = createNode();
+            current = head->next;
+            tmp1 = head->next;
+            while (current->next != NULL)
+            {
+                after = current->next;
+                current->next = before;
+                before = current;
+                current = after;
+            }
             current->next = before;
             before = current;
-            current = after;
+            head->next = before;
+            tmp1->next = NULL;
+            return head;
         }
-        current->next = before;
-        before = current;
-        head->next = before;
-        tmp1->next = NULL;
     }
     return head;
 }
@@ -126,11 +130,14 @@ int main()
 {
     node *head = NULL;
     head = malloc(sizeof(node));
-    insertAtEnd(&head, 5);                  // 5
-    insertAtEnd(&head, 6);                  // 5 6
-    insertAtBeginning(&head, 20);           // 20 5 6
-    insertAfterAGivenElement(&head, 45, 5); // 20 5 45 6
-    deleteNodeWithValue(&head, 5);          // 20 45 6
-    head = reversingLinkedList(head);       // 6 45 20
+    insertAtEnd(&head, 5);
+    insertAtEnd(&head, 6);
+    // insertAtBeginning(&head, 20);
+    // insertAfterAGivenElement(&head, 45, 0);
+    deleteNodeWithValue(&head, 70);
+    // deleteNodeWithValue(&head, 5);
+    // deleteNodeWithValue(&head, 6);
+    // deleteNodeWithValue(&head, 20);
+    head = reversingLinkedList(head);
     printLList(head);
 }
